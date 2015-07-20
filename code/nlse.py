@@ -2,7 +2,6 @@
 SemEval models
 '''
 
-import sys
 import numpy as np
 import theano
 import theano.tensor as T
@@ -27,19 +26,15 @@ class NLSE():
     def __init__(self, emb_path, sub_size=10, model_file=None):
 
         # Random Seed
-        rng = np.random.RandomState(1234)
-        lex_feat_size = 80
+        rng = np.random.RandomState(1234)        
         if model_file:
-
             # Load pre existing model  
             with open(model_file, 'rb') as fid: 
                 [W1, W2, W3] = cPickle.load(fid)
             W1 = theano.shared(W1, borrow=True)
             W2 = theano.shared(W2, borrow=True)
             W3 = theano.shared(W3, borrow=True)
-
         else:
-
             # Embeddings e.g. Wang's, word2vec.   
             with open(emb_path, 'rb') as fid:
                 W1 = cPickle.load(fid).astype(theano.config.floatX)
