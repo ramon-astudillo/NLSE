@@ -16,7 +16,7 @@ def init_W(size, rng):
     else:
         n_out, n_in = size[0], size[3]
     w0 = np.sqrt(6./(n_in + n_out))   
-    W = 4*np.asarray(rng.uniform(low=-w0, high=w0, size=size))
+    W = np.asarray(rng.uniform(low=-w0, high=w0, size=size))
     return theano.shared(W.astype(theano.config.floatX), borrow=True)
 
 class NLSE():
