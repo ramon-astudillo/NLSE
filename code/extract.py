@@ -111,7 +111,7 @@ def get_onehot(vocab_size, dataset):
             
         return X
 
-def get_features(file_names, one_hot=False):
+def save_features(file_names, one_hot=False):
 
     #READ CORPORA
     datasets = []
@@ -129,6 +129,7 @@ def get_features(file_names, one_hot=False):
                     idx += 1       
     #save index
     with open(index_path,"w") as fid:
+        print "saving vocabulary: %s" % (index_path)
         cPickle.dump(wrd2idx, fid, cPickle.HIGHEST_PROTOCOL)
     
     #EXTRACT FEATURES
@@ -144,7 +145,12 @@ def get_features(file_names, one_hot=False):
     out_file, _ = os.path.splitext(file_names[0])
     with open(out_folder % out_file,"w") as fid:
         print "saving features: %s" % (out_folder % out_file)
-        cPickle.dump([train_x, train_y, dev_x, dev_y], fid, cPickle.HIGHEST_PROTOCOL)
+        cPickle.dump([train_x, train_y], fid, cPickle.HIGHEST_PROTOCOL)
+
+    with open(out_folder % "dev","w") as fid:
+        print "saving features: %s" % (out_folder % "dev")
+        cPickle.dump([dev_x, dev_y], fid, cPickle.HIGHEST_PROTOCOL)
+
 
     for fname, dataset in zip(file_names[1:], datasets[1:]):
         x, y = extract_feats(dataset, wrd2idx, one_hot)
@@ -154,20 +160,20 @@ def get_features(file_names, one_hot=False):
             cPickle.dump([x, y], fid, cPickle.HIGHEST_PROTOCOL)
 
 
-def get_embedding(emb_path):
+def save_embedding(emb_path):
     
     '''
         Save a matrix of pre-trained embeddings
     '''
 
     if not os.path.isfile(index_path):
-        raise IOError, ("Unable to find the word index file\nRun with -f option to create the missing file")
+        raise IOError, ("Unable to find the word index file\nRun with -f option to create the index file")
     else:
         with open(index_path,"r") as fid:
             wrd2idx = cPickle.load(fid)
 
     if not os.path.isfile(emb_path):
-            raise IOError, ("Unable to find the word embeddings file")
+        raise IOError, ("Unable to find the word embeddings file")
     
     print "Extracting %s -> %s" % (emb_path, pretrained_emb)  
 
@@ -185,8 +191,6 @@ def get_embedding(emb_path):
     with open(pretrained_emb, 'w') as fid:
         cPickle.dump(E, fid, cPickle.HIGHEST_PROTOCOL)
     
-
-
 def save_pruned_embeddings(wrd2idx, out_file):
 
     with open(emb_path) as fid:
@@ -200,40 +204,29 @@ def save_pruned_embeddings(wrd2idx, out_file):
                 if wrd in wrd2idx:
                     fod.write(line)                        
 
-def check_args(args):
-
-    ERROR_MSG = "Some Error Messsage"    
-    try:
-        opt = sys.argv[1].lower()
-        if opt == "-f":            
-            datasets = sys.argv[2:]
-            if len(datasets) < 1:
-                print ERROR_MSG
-        elif opt == "-e":
-            try:
-                emb_path = sys.argv[2]                
-            except KeyError:
-                print ERROR_MSG      
-        else:
-            print ERROR_MSG
-    except KeyError:
-        print ERROR_MSG
-        
-
-if __name__ == "__main__":
-    
-    #sanity checks
-    # check_args(sys.argv)    
+if __name__ == "__main__":    
+    #sanity checks    
+    MESSAGE = "python code/extract.py \n [-f train_file test_file_1 ... test_file_n]: extract features and vocabulary from files in folder /data/txt/ \n [-e path_to_embeddings_file]: create a matrix of pretrained embeddings using the vocabulary extracted using the -f option"
     opt = sys.argv[1].lower()
-    if opt == "-f":
-        print "extracting features"
-        datasets = sys.argv[2:]            
-        get_features(datasets)
-    elif opt == "-e":            
-        emb_path = sys.argv[2]
-        print "extracting embeddings"            
-        get_embedding(emb_path)
+    if opt == "-f":        
+        try:
+            fnames = sys.argv[2:]   
+            if len(fnames) < 1:
+                print "ERROR: No file names given\n"
+                print MESSAGE         
+            else:                
+                save_features(fnames)
+        except IndexError:
+            print "ERROR: No file names given\n"
+            print MESSAGE                 
+    elif opt == "-e":
+        try:            
+            emb_path = sys.argv[2]            
+            save_embedding(emb_path)
+        except IndexError:
+            print "ERROR: please provide the path to the word embeddings file\n"
+            print MESSAGE                 
     else:
-        raise NotImplemented
+        print MESSAGE
 
     

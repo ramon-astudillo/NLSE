@@ -17,14 +17,14 @@ import FMeasure as Fmes
 # DEBUGGING
 from ipdb import set_trace
 
-def main(train_data, model_path):
+def main(train_data, dev_data, model_path):
 
     ####################################
     #           CONFIG 
     ####################################
-
+    
     # TRAIN 
-    n_iter  = 3
+    n_iter  = 6
     lrate   = np.array(0.01).astype(theano.config.floatX)
 
     # MODEL 
@@ -37,21 +37,17 @@ def main(train_data, model_path):
     nn = nlse.NLSE(pretrained_emb, sub_size=sub_size)
     
     # SEMEVAL TRAIN TWEETS
-    print "Loading %s" % train_data 
-    print "Training %s" % model_path
+    print "Training data: %s\nDev data: %s " % (train_data, dev_data)
+    print "Model: %s" % model_path
     with open(train_data, 'rb') as fid:
-        [train_x, train_y, dev_x, dev_y] = cPickle.load(fid) 
-
+        train_x, train_y = cPickle.load(fid) 
+    with open(dev_data, 'rb') as fid:
+        dev_x, dev_y = cPickle.load(fid) 
+    
     #reformat the labels for the NLSE model
     train_y = [np.array(dy).astype('int32')[None] for dy in train_y]
     dev_y = [np.array(dy).astype('int32')[None] for dy in dev_y]
-
-    train_x = train_x[:50]
-    train_y = train_y[:50]
-    dev_x = dev_x[:20]
-    dev_y = dev_y[:20]
-
-    # set_trace()
+    
     # RESHAPE TRAIN DATA AS A SINGLE NUMPY ARRAY
     # Start and end indices
     # RESHAPE TRAIN DATA AS A SINGLE NUMPY ARRAY
@@ -106,8 +102,7 @@ def main(train_data, model_path):
             sys.stdout.write("\rDevel %d/%d            " % (j+1, len(dev_x)))
             sys.stdout.flush()   
         # Compute SemEval scores
-        Fm = Fmes.FmesSemEval(confusionMatrix=ConfMat)
-        # set_trace()
+        Fm = Fmes.FmesSemEval(confusionMatrix=ConfMat)        
         # INFO
         if last_cr:
             # Keep bet model
@@ -127,22 +122,25 @@ def main(train_data, model_path):
         last_cr = cr
 
         # SAVE MODEL
-        tmp_model_path = model_path.replace('.pkl','.%d.pkl' % (i+1))
-        nn.save(tmp_model_path)
+        # tmp_model_path = model_path.replace('.pkl','.%d.pkl' % (i+1))
+    nn.save(model_path)
 
     # Store best model with the original model name
-    tmp_model_path = model_path.replace('.pkl','.%d.pkl' % best_cr[1])
-    print "Best model %s -> %s\nDev %2.5f %%" % (tmp_model_path, 
-                                                 model_path, best_cr[0]*100)
-    shutil.copy(tmp_model_path, model_path)
+    # tmp_model_path = model_path.replace('.pkl','.%d.pkl' % best_cr[1])
+    # print "Best model %s -> %s\nDev %2.5f %%" % (tmp_model_path, 
+    #                                              model_path, best_cr[0]*100)
+    # shutil.copy(tmp_model_path, model_path)
 
-def check_args(args):
-
-    pass
 
 if __name__ == '__main__':
+    MESSAGE = "python code/train.py train_file dev_file model_path"
     
-    check_args(sys.argv)
-    train_feats = sys.argv[1]
-    model_path = sys.argv[2]
-    main(train_feats, model_path)
+    try:
+        train_feats = sys.argv[1]
+        dev_feats   = sys.argv[2]
+        model_path  = sys.argv[3]
+        main(train_feats, dev_feats, model_path)
+    except IndexError:
+        print "ERROR: missing files"
+        print MESSAGE    
+    

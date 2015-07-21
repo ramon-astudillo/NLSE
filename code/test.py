@@ -1,5 +1,5 @@
 import cPickle
-import FMeasure as Fm
+import FMeasure as Fmes
 import nlse
 import numpy as np
 import sys
@@ -12,11 +12,9 @@ def main(model_path, test_sets):
 	nn = nlse.NLSE(pretrained_emb, model_file=model_path)
 
 	for test_set in test_sets:
-		print "Testing dataset: %s" % test_set
+		print "\nTesting dataset: %s" % test_set
 		with open(test_set, 'rb') as fid:
-			X, Y = cPickle.load(fid) 
-			X = X[:20]
-			Y = Y[:20]			
+			X, Y = cPickle.load(fid) 			
 
 			acc     = 0.
 			mapp    = np.array([ 1, 2, 0])
@@ -29,22 +27,32 @@ def main(model_path, test_sets):
 				conf_mat[mapp[y], mapp[hat_y]] += 1
 				# Accuracy
 				acc    = (acc*j + (hat_y == y).astype(float))/(j+1)
-				if not (j % 5):
+				if not (j % 100):
 					sys.stdout.write("\rTesting %d/%d" % (j+1, len(X)))
 					sys.stdout.flush()   
-			fm = Fm.FmesSemEval(confusionMatrix=conf_mat)
+			fm = Fmes.FmesSemEval(confusionMatrix=conf_mat)
 			# set_trace()
 
-			print "\n\nAvg. F-measure (POS/NEG): %.3f" % fm
-			print "\nAccuracy: %.3f" % acc
+			sys.stdout.write("\rAcc: %2.5f | Fm: %2.5f%%\n" % ( acc*100, fm*100))
+			sys.stdout.flush()   
 
-def check_args(args):
-	pass
-
+			
 if __name__ == '__main__':
-    
-    check_args(sys.argv)
-    model_path = sys.argv[1]
-    test_sets = sys.argv[2:]
-    
-    main(model_path, test_sets)
+	MESSAGE = "python code/test.py model_path test_file_1 ... test_file_n"
+
+	try:
+		model_path = sys.argv[1]
+		fnames = sys.argv[2:]   		
+		if len(fnames) < 1:        	
+			print "ERROR: No file names given\n"
+			print MESSAGE         
+		else:
+			print "extracting features"            			
+			main(model_path, fnames)			
+	except IndexError:
+		print "ERROR: missing arguments\n"
+		print MESSAGE                     
+
+
+
+
