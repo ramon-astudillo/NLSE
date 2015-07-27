@@ -6,13 +6,7 @@ import os
 import tarfile
 import sys
 
-index_path = 'data/pkl/wrd2idx.pkl'  
-emb_zip    = 'embeddings/str_skip_600.tar.gz'    
-pretrained_emb = 'data/pkl/Emb.pkl'
-
-in_folder = 'data/txt/%s'
-out_folder = 'data/pkl/%s.pkl'
-
+index_name     = 'wrd2idx.pkl'  
 
 def split_train_dev(train_x, train_y, perc=0.8):
     '''
@@ -111,13 +105,13 @@ def get_onehot(vocab_size, dataset):
             
         return X
 
-def save_features(file_names, one_hot=False):
+def save_features(file_names, out_folder, one_hot=False):
 
     #READ CORPORA
     datasets = []
     for fname in file_names:
-        datasets.append(read_corpus(in_folder % fname)) 
-    
+        datasets.append(read_corpus(fname)) 
+
     wrd2idx = {}
     idx = 0        
     #BUILD INDEX FROM ALL CORPORA
@@ -127,7 +121,12 @@ def save_features(file_names, one_hot=False):
                 if wrd not in wrd2idx:
                     wrd2idx[wrd] = idx
                     idx += 1       
+
+    if not os.path.isdir(out_folder):
+        os.mkdir(out_folder)
+
     #save index
+    index_path = out_folder + '/' + index_name
     with open(index_path,"w") as fid:
         print "saving vocabulary: %s" % (index_path)
         cPickle.dump(wrd2idx, fid, cPickle.HIGHEST_PROTOCOL)
@@ -136,38 +135,41 @@ def save_features(file_names, one_hot=False):
     #ASSUMES THAT THE FIRST FILE REFERS TO THE TRAINING DATA        
     train_raw_x, train_raw_y = extract_feats(datasets[0], wrd2idx, one_hot=False) 
     #shuffle traininig data and split into train and dev
-    train_x, train_y, dev_x, dev_y = split_train_dev(train_raw_x, train_raw_y, perc=0.8)
+    train_x, train_y, dev_x, dev_y = split_train_dev(train_raw_x, train_raw_y, 
+                                                     perc=0.8)
     
     if one_hot:
         train_x = get_onehot(len(wrd2idx), train_x)
         dev_x   = get_onehot(len(wrd2idx), dev_x)        
     #save training/dev features        
-    out_file, _ = os.path.splitext(file_names[0])
-    with open(out_folder % out_file,"w") as fid:
-        print "saving features: %s" % (out_folder % out_file)
+    out_name = os.path.basename(os.path.splitext(file_names[0])[0])
+    out_file = out_folder + '/' + out_name + '.pkl'
+    with open(out_file,"w") as fid:
+        print "saving features: %s" % out_file
         cPickle.dump([train_x, train_y], fid, cPickle.HIGHEST_PROTOCOL)
 
-    with open(out_folder % "dev","w") as fid:
-        print "saving features: %s" % (out_folder % "dev")
+    out_file = out_folder + '/' + 'dev.pkl'
+    with open(out_file,"w") as fid:
+        print "saving features: %s" % out_file
         cPickle.dump([dev_x, dev_y], fid, cPickle.HIGHEST_PROTOCOL)
 
-
     for fname, dataset in zip(file_names[1:], datasets[1:]):
-        x, y = extract_feats(dataset, wrd2idx, one_hot)
-        out_file = os.path.splitext(fname)[0]
-        with open(out_folder % out_file, "w") as fid:
-            print "saving features: %s" % (out_folder % out_file)
+        x, y     = extract_feats(dataset, wrd2idx, one_hot)
+        out_name = os.path.basename(os.path.splitext(fname)[0])
+        out_file = out_folder + '/' + out_name + '.pkl'
+        with open(out_file, "w") as fid:
+            print "saving features: %s" % out_file
             cPickle.dump([x, y], fid, cPickle.HIGHEST_PROTOCOL)
 
-
-def save_embedding(emb_path):
+def save_embedding(emb_path, pretrained_emb, index_path):
     
     '''
         Save a matrix of pre-trained embeddings
     '''
 
     if not os.path.isfile(index_path):
-        raise IOError, ("Unable to find the word index file\nRun with -f option to create the index file")
+        raise IOError, ("Unable to find the word index file\nRun with -f" 
+                        "option to create the index file")
     else:
         with open(index_path,"r") as fid:
             wrd2idx = cPickle.load(fid)
@@ -210,23 +212,22 @@ if __name__ == "__main__":
     opt = sys.argv[1].lower()
     if opt == "-f":        
         try:
-            fnames = sys.argv[2:]   
+            fnames     = sys.argv[2:-1]   
+            out_folder = sys.argv[-1]
             if len(fnames) < 1:
                 print "ERROR: No file names given\n"
                 print MESSAGE         
             else:                
-                save_features(fnames)
+                save_features(fnames, out_folder)
         except IndexError:
             print "ERROR: No file names given\n"
             print MESSAGE                 
     elif opt == "-e":
         try:            
-            emb_path = sys.argv[2]            
-            save_embedding(emb_path)
+            emb_path, pretrained_emb, index_path = sys.argv[2:]            
+            save_embedding(emb_path, pretrained_emb, index_path)
         except IndexError:
             print "ERROR: please provide the path to the word embeddings file\n"
             print MESSAGE                 
     else:
         print MESSAGE
-
-    

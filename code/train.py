@@ -3,6 +3,7 @@
 Sub-space training 
 '''
 import sys
+import os
 sys.path.append('code')
 import shutil
 import numpy as np
@@ -17,7 +18,7 @@ import FMeasure as Fmes
 # DEBUGGING
 from ipdb import set_trace
 
-def main(train_data, dev_data, model_path):
+def main(train_data, dev_data, pretrained_emb, model_path):
 
     ####################################
     #           CONFIG 
@@ -25,11 +26,11 @@ def main(train_data, dev_data, model_path):
     
     # TRAIN 
     n_iter  = 6
-    lrate   = np.array(0.01).astype(theano.config.floatX)
+    #lrate   = np.array(0.01).astype(theano.config.floatX)
+    lrate   = 0.01
 
     # MODEL 
     # Pre-trained embeddings
-    pretrained_emb = 'data/pkl/Emb.pkl'
     # Sub space size 
     sub_size = 10
 
@@ -121,8 +122,10 @@ def main(train_data, dev_data, model_path):
             best_cr = [cr, i+1]
         last_cr = cr
 
-        # SAVE MODEL
-        # tmp_model_path = model_path.replace('.pkl','.%d.pkl' % (i+1))
+    # SAVE MODEL
+    dir_path = os.path.dirname(model_path)    
+    if not os.path.isdir(dir_path):
+        os.mkdir(dir_path)
     nn.save(model_path)
 
     # Store best model with the original model name
@@ -131,15 +134,16 @@ def main(train_data, dev_data, model_path):
     #                                              model_path, best_cr[0]*100)
     # shutil.copy(tmp_model_path, model_path)
 
-
 if __name__ == '__main__':
+
     MESSAGE = "python code/train.py train_file dev_file model_path"
     
     try:
-        train_feats = sys.argv[1]
-        dev_feats   = sys.argv[2]
-        model_path  = sys.argv[3]
-        main(train_feats, dev_feats, model_path)
+        train_feats    = sys.argv[1]
+        dev_feats      = sys.argv[2]
+        pretrained_emb = sys.argv[3]
+        model_path     = sys.argv[4]
+        main(train_feats, dev_feats, pretrained_emb, model_path)
     except IndexError:
         print "ERROR: missing files"
         print MESSAGE    
