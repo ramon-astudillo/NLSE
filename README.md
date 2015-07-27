@@ -39,7 +39,7 @@ Once you have formatted the data and obtained the mebddings, you just have to ru
 to train a model and obtain the baseline. 
 
 
-*Step by Step*
+**Step by Step**
 
 If you want to carry out this steps by yourself, you need to do the following
 
