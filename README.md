@@ -26,8 +26,11 @@ format per line as
 
     word embedding_vector
 
-embedding_vector separates each float by a white space. To get our
-structured-skip-gram embeddings, you can reach us by email. 
+embedding_vector separates each float by a white space. To get the
+structured-skip-gram embeddings used in the paper, you can reach us by email. 
+These can also be obtained using 
+
+    https://github.com/wlin12/JNN
 
 Once you have formatted the data and obtained the mebddings, you just have to run 
 
