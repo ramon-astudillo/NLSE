@@ -3,11 +3,14 @@ NLSE
 Non-Linear Sub-Space Embedding model used for the SemEval challenge described
 in
 
-    R. F. Astudillo, S. Amir,  W. Ling, B. Martins, M. Silva and I. Trancoso "INESC-ID: Sentiment Analysis without hand-coded Features or Liguistic Resources using Embedding Subspaces", SemEval 2015
+    R. F. Astudillo, S. Amir,  W. Ling, B. Martins, M. Silva and I. Trancoso "INESC-ID: 
+    Sentiment Analysis without hand-coded Features or Liguistic Resources using Embedding 
+    Subspaces", SemEval 2015
     
 for the extended experiments, including POS tagging, please cite
 
-    R. F. Astudillo, S. Amir,  W. Ling, M. Silva and I. Trancoso "Learning Word Representations from Scarce and Noisy Data with Embedding Sub-spaces", ACL-IJCNLP 2015
+    R. F. Astudillo, S. Amir,  W. Ling, M. Silva and I. Trancoso "Learning Word Representations 
+    from Scarce and Noisy Data with Embedding Sub-spaces", ACL-IJCNLP 2015
 
 This code assumes that you posses the SemEval data from 2013 to 2015. You need
 to tokenize the data using
@@ -45,9 +48,9 @@ Yo also will need to use some pre-trained embeddings. At the momment to get
 our structured-skip-gram embeddings, you can reach us by email. Once you have
 them, you can use
 
-python code/extract.py -e DATA/txt/struct_skip_50.txt \
-                          DATA/pkl/struct_skip_50.pkl \
-                          DATA/pkl/wrd2idx.pkl
+    python code/extract.py -e DATA/txt/struct_skip_50.txt \
+                              DATA/pkl/struct_skip_50.pkl \
+                              DATA/pkl/wrd2idx.pkl
 
 To train the model use
 
