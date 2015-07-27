@@ -21,7 +21,7 @@ Each tweet occupies one line, and should look like this example
 
     id1 id2 neutral None @USER i told you shane would get his 5th-star on rivals before signing day . @USER
 
-You will also need to use some pre-trained embeddings. This are stored in text
+You will also need to use some pre-trained embeddings. These should be stored in text
 format per line as
 
     word embedding_vector
