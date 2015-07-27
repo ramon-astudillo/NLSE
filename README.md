@@ -30,11 +30,11 @@ by yourself, you need to do the following
 
 You should create the index and global vocabulary. For this you need to use
 
-python code/extract.py -f DATA/txt/semeval_train.txt \
-                          DATA/txt/tweets_2013.txt \
-                          DATA/txt/tweets_2014.txt \
-                          DATA/txt/tweets_2015.txt \
-                          DATA/pkl/ 
+    python code/extract.py -f DATA/txt/semeval_train.txt \
+                              DATA/txt/tweets_2013.txt \
+                              DATA/txt/tweets_2014.txt \
+                              DATA/txt/tweets_2015.txt \
+                              DATA/pkl/ 
 
 This store as DATA/pkl/semeval_train.pkl and create a global vocabulary for all
 txt files in Pickel format under
