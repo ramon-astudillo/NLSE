@@ -12,12 +12,12 @@ For the extended experiments, including POS tagging, please cite
     R. F. Astudillo, S. Amir,  W. Ling, M. Silva and I. Trancoso "Learning Word Representations 
     from Scarce and Noisy Data with Embedding Sub-spaces", ACL-IJCNLP 2015
 
-This code assumes that you posses the SemEval data from 2013 to 2015. You need
-to tokenize the data using
+To reproduce the results you will need the SemEval data from 2013 to 2015. You also 
+need to tokenize the data using
 
     https://github.com/myleott/ark-twokenize-py
 
-Each tweet occupies one line, and should look like this example
+Each tweet should occupy one line, and should look like this example
 
     id1 id2 neutral None @USER i told you shane would get his 5th-star on rivals before signing day . @USER
 
@@ -32,12 +32,9 @@ These can also be obtained using
 
     https://github.com/wlin12/JNN
 
-Once you have formatted the data and obtained the mebddings, you just have to run 
+Once you have formatted the data and obtained the embeddings, you just have to run 
 
     ./go.sh
-
-to train a model and obtain the baseline. 
-
 
 **Step by Step**
 
