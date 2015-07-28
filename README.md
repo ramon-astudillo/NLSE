@@ -18,7 +18,8 @@ You will need a modern Python 2 (for example Python 2.7) and the numpy and
 theano modules. For the larger embeddings a GPU will be necessary to process 
 the data at a reasonable speed. The go.sh bash script will need cygwin or
 equivalent in Windows machines, but you can run the python commands 
-inside the script on a Windows machine directly iy you want to spare this part.
+inside the script on a Windows machine directly. See the Step by Step section
+for instructions.
 
 **Data**
 
@@ -27,7 +28,7 @@ To reproduce the paper's results you will need the SemEval data from 2013 to
 
     https://github.com/myleott/ark-twokenize-py
 
-Each tweet should occupy one line, and should look like this example
+If done right, each tweet should occupy one line, and should look like this example
 
     id1 id2 neutral None @USER i told you shane would get his 5th-star on rivals before signing day . @USER
 
@@ -53,10 +54,12 @@ and you have no GPU, this might take a while.
 
 **Step by Step Explanation**
 
-In cae, you want to use this code with other data-sets here is a detailed
-description of what you need to do.
+In case, you want to use this code with other data-sets here is a detailed
+description of what you need to do. These are also the steps followed inside
+go.sh
 
-First you create the index and global vocabulary. For this you need to use
+First you create the index and global vocabulary from the text-based data. For 
+this you need to use
 
     python code/extract.py -f DATA/txt/semeval_train.txt \
                               DATA/txt/tweets_2013.txt \
@@ -68,18 +71,20 @@ This will store Pickle files with same file name as the txt files under
 
     DATA/pkl
 
-If you have any number of txt using the same format, it should work as well.
+It will also store a wrd2idx.pkl containing a dictionary that maps each word to
+an integer index. If you have any number of txt files using the same format, 
+it should work as well.
 
 Next thing is to select the pre-trained embeddings present in the vocabulary
-you are using. This is done with
+you are using to build your embedding matrix. This is done with
 
     python code/extract.py -e DATA/txt/struct_skip_50.txt \
                               DATA/pkl/struct_skip_50.pkl \
                               DATA/pkl/wrd2idx.pkl
 
 Note that this step can be a source of problems. If you have words that are not
-in your mebeddings they will be set to an embedding of zero. This can be
-counter-productive.
+in your embeddings they will be set to an embedding of zero. This can be
+counter-productive in some cases.
 
 To train the model use
 
@@ -88,7 +93,14 @@ To train the model use
                          DATA/pkl/struct_skip_50.pkl \
                          DATA/models/sskip_50.pkl
 
-Finaly to get the SemEval results, you just need to do
+Here 
+
+    DATA/models/sskip_50.pkl
+
+Is just a example name to define the model. You should use more detailed names
+to remember the hyper-parameters used.
+
+Finally to get the SemEval results, you just need to do
 
     python code/test.py DATA/models/sskip_50.pkl \
                         DATA/pkl/tweets_2013.pkl \
