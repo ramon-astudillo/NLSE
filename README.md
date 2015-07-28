@@ -88,8 +88,8 @@ counter-productive in some cases.
 
 To train the model use
 
-    python code/train.py data/pkl/semeval_train.pkl \
-                         data/pkl/dev.pkl \
+    python code/train.py DATA/pkl/semeval_train.pkl \
+                         DATA/pkl/dev.pkl \
                          DATA/pkl/struct_skip_50.pkl \
                          DATA/models/sskip_50.pkl
 
