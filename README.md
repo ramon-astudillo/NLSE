@@ -12,8 +12,18 @@ For the extended experiments, including POS tagging, please cite
     R. F. Astudillo, S. Amir,  W. Ling, M. Silva and I. Trancoso "Learning Word Representations 
     from Scarce and Noisy Data with Embedding Sub-spaces", ACL-IJCNLP 2015
 
-To reproduce the results you will need the SemEval data from 2013 to 2015. You also 
-need to tokenize the data using
+**Instalation**
+
+You will need a modern Python 2 (for example Python 2.7) and the numpy and 
+theano modules. For the larger embeddings a GPU will be necessary to process 
+the data at a reasonable speed. The go.sh bash script will need cygwin or
+equivalent in Windows machines, but you can run the python commands 
+inside the script on a Windows machine directly iy you want to spare this part.
+
+**Data**
+
+To reproduce the paper's results you will need the SemEval data from 2013 to
+2015. You also need to tokenize the data using
 
     https://github.com/myleott/ark-twokenize-py
 
@@ -32,15 +42,21 @@ These can also be obtained using
 
     https://github.com/wlin12/JNN
 
+**Reproducing the Results**
+
 Once you have formatted the data and obtained the embeddings, you just have to run 
 
     ./go.sh
 
-**Step by Step**
+to extract the data and train the model. If you are using the largest embeddings
+and you have no GPU, this might take a while.
 
-If you want to carry out this steps by yourself, you need to do the following
+**Step by Step Explanation**
 
-You should create the index and global vocabulary. For this you need to use
+In cae, you want to use this code with other data-sets here is a detailed
+description of what you need to do.
+
+First you create the index and global vocabulary. For this you need to use
 
     python code/extract.py -f DATA/txt/semeval_train.txt \
                               DATA/txt/tweets_2013.txt \
@@ -48,19 +64,22 @@ You should create the index and global vocabulary. For this you need to use
                               DATA/txt/tweets_2015.txt \
                               DATA/pkl/ 
 
-This will store Pickel files with same file name under 
+This will store Pickle files with same file name as the txt files under 
 
     DATA/pkl
 
-Note that this should also work with any number of input files as long as the
-file format is respected.
+If you have any number of txt using the same format, it should work as well.
 
-Once you have
-them, you can use
+Next thing is to select the pre-trained embeddings present in the vocabulary
+you are using. This is done with
 
     python code/extract.py -e DATA/txt/struct_skip_50.txt \
                               DATA/pkl/struct_skip_50.pkl \
                               DATA/pkl/wrd2idx.pkl
+
+Note that this step can be a source of problems. If you have words that are not
+in your mebeddings they will be set to an embedding of zero. This can be
+counter-productive.
 
 To train the model use
 
@@ -69,7 +88,7 @@ To train the model use
                          DATA/pkl/struct_skip_50.pkl \
                          DATA/models/sskip_50.pkl
 
-Get SemEval results
+Finaly to get the SemEval results, you just need to do
 
     python code/test.py DATA/models/sskip_50.pkl \
                         DATA/pkl/tweets_2013.pkl \
