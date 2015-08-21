@@ -5,12 +5,17 @@ in
 
     R. F. Astudillo, S. Amir,  W. Ling, B. Martins, M. Silva and I. Trancoso "INESC-ID: 
     Sentiment Analysis without hand-coded Features or Liguistic Resources using Embedding 
-    Subspaces", SemEval 2015
+    Subspaces", SemEval 2015 
+    
+[[pdf]](http://alt.qcri.org/semeval2015/cdrom/pdf/SemEval109.pdf), [[BibTex]](https://scholar.google.pt/scholar.bib?q=info:ocLxCnCv3BIJ:scholar.google.com/&output=citation&scisig=AAGBfm0AAAAAVdckz2Jdg1II6YtdC0iMIN9l2RyFix9R&scisf=4&hl=en)
     
 For the extended experiments, including POS tagging, please cite
 
     R. F. Astudillo, S. Amir,  W. Ling, M. Silva and I. Trancoso "Learning Word Representations 
     from Scarce and Noisy Data with Embedding Sub-spaces", ACL-IJCNLP 2015
+    
+[[pdf]](http://anthology.aclweb.org/P/P15/P15-1104.pdf),
+[[BibTex]](https://scholar.google.pt/scholar.bib?q=info:0rog_aWHY1QJ:scholar.google.com/&output=citation&scisig=AAGBfm0AAAAAVdclXBe81CgJ3lNDs6Y5Ul2Zjrbi7nxu&scisf=4&hl=en)
 
 **Instalation**
 
