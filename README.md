@@ -82,7 +82,7 @@ this you need to use
 
 This will store Pickle files with same file name as the txt files under 
 
-    DATA/pkl
+    DATA/pkl/
 
 It will also store a wrd2idx.pkl containing a dictionary that maps each word to
 an integer index. If you have any number of txt files using the same format, 
