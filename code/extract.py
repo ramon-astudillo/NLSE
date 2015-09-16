@@ -175,7 +175,7 @@ def save_embedding(emb_path, pretrained_emb, index_path):
             wrd2idx = cPickle.load(fid)
 
     if not os.path.isfile(emb_path):
-        raise IOError, ("Unable to find the word embeddings file")
+        raise IOError, ("Unable to find the word embeddings file %s" % emb_path)
     
     print "Extracting %s -> %s" % (emb_path, pretrained_emb)  
 
@@ -189,6 +189,11 @@ def save_embedding(emb_path, pretrained_emb, index_path):
             wrd   = items[0]
             if wrd in wrd2idx:
                 E[:, wrd2idx[wrd]] = np.array(items[1:]).astype(float)
+        # Number of out of embedding vocabulary embeddings
+        n_OOEV = np.sum((E.sum(0) == 0).astype(int))
+        perc = n_OOEV*100./len(wrd2idx)
+        print ("%d/%d (%2.2f %%) words in vocabulary found no embedding" 
+               % (n_OOEV, len(wrd2idx), perc)) 
     #save the embeddings
     with open(pretrained_emb, 'w') as fid:
         cPickle.dump(E, fid, cPickle.HIGHEST_PROTOCOL)

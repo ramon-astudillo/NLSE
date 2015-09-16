@@ -18,24 +18,26 @@ import FMeasure as Fmes
 # DEBUGGING
 from ipdb import set_trace
 
-def main(train_data, dev_data, pretrained_emb, model_path):
+def help():
+    print "\npython code/train.py train_file dev_file model_path\n"
+    exit()
 
-    ####################################
-    #           CONFIG 
-    ####################################
-    
-    # TRAIN 
-    n_iter  = 6
-    #lrate   = np.array(0.01).astype(theano.config.floatX)
+if __name__ == '__main__':
+
+    # ARGUMENT HANDLING
+    if len(sys.argv[1:]) != 4:
+        help()
+    train_data, dev_data, pretrained_emb, model_path = sys.argv[1:] 
+
+    # TRAIN CONFIG 
+    n_iter  = 8
     lrate   = 0.01
 
-    # MODEL 
-    # Pre-trained embeddings
-    # Sub space size 
-    sub_size = 10
+    # MODEL CONFIG
+    sub_size = 10  # Sub-space size 
 
     # Create model
-    nn = nlse.NLSE(pretrained_emb, sub_size=sub_size)
+    nn = nlse.NLSE(pretrained_emb, sub_size)
     
     # SEMEVAL TRAIN TWEETS
     print "Training data: %s\nDev data: %s " % (train_data, dev_data)
@@ -45,12 +47,10 @@ def main(train_data, dev_data, pretrained_emb, model_path):
     with open(dev_data, 'rb') as fid:
         dev_x, dev_y = cPickle.load(fid) 
     
-    #reformat the labels for the NLSE model
+    # reformat the labels for the NLSE model
     train_y = [np.array(dy).astype('int32')[None] for dy in train_y]
     dev_y = [np.array(dy).astype('int32')[None] for dy in dev_y]
     
-    # RESHAPE TRAIN DATA AS A SINGLE NUMPY ARRAY
-    # Start and end indices
     # RESHAPE TRAIN DATA AS A SINGLE NUMPY ARRAY
     # Start and end indices
     lens = np.array([len(tr) for tr in train_x]).astype('int32')
@@ -66,7 +66,7 @@ def main(train_data, dev_data, pretrained_emb, model_path):
     st = theano.shared(st, borrow=True)
     ed = theano.shared(ed, borrow=True)
 
-    # Update rule
+    # SGD Update rule
     updates = [(pr, pr-lrate*gr) for pr, gr in zip(nn.params, nn.nablas)]
     # Mini-batch
     i  = T.lscalar()
@@ -111,13 +111,13 @@ def main(train_data, dev_data, pretrained_emb, model_path):
                 best_cr = [cr, i+1]
             delta_cr = cr - last_cr
             if delta_cr >= 0:
-                print ("\rEpoch %2d/%2d: Acc %2.5f%% \033[32m+%2.5f\033[0m (Fm %2.5f%%)" % 
+                print ("\rEpoch %2d/%2d: Acc %2.2f%% \033[32m+%2.2f\033[0m (Fm %2.2f%%)" % 
                        (i+1, n_iter, cr*100, delta_cr*100, Fm*100))
             else: 
-                print ("\rEpoch %2d/%2d: Acc %2.5f%% \033[31m%2.5f\033[0m (Fm %2.5f%%)" % 
+                print ("\rEpoch %2d/%2d: Acc %2.2f%% \033[31m%2.2f\033[0m (Fm %2.2f%%)" % 
                        (i+1, n_iter, cr*100, delta_cr*100, Fm*100))
         else:
-            print "\rEpoch %2d/%2d: %2.5f (Fm %2.5f%%)" % (i+1, n_iter, cr*100,
+            print "\rEpoch %2d/%2d: %2.2f (Fm %2.2f%%)" % (i+1, n_iter, cr*100,
                                                            Fm*100)
             best_cr = [cr, i+1]
         last_cr = cr
@@ -130,21 +130,6 @@ def main(train_data, dev_data, pretrained_emb, model_path):
 
     # Store best model with the original model name
     # tmp_model_path = model_path.replace('.pkl','.%d.pkl' % best_cr[1])
-    # print "Best model %s -> %s\nDev %2.5f %%" % (tmp_model_path, 
+    # print "Best model %s -> %s\nDev %2.2f %%" % (tmp_model_path, 
     #                                              model_path, best_cr[0]*100)
     # shutil.copy(tmp_model_path, model_path)
-
-if __name__ == '__main__':
-
-    MESSAGE = "python code/train.py train_file dev_file model_path"
-    
-    try:
-        train_feats    = sys.argv[1]
-        dev_feats      = sys.argv[2]
-        pretrained_emb = sys.argv[3]
-        model_path     = sys.argv[4]
-        main(train_feats, dev_feats, pretrained_emb, model_path)
-    except IndexError:
-        print "ERROR: missing files"
-        print MESSAGE    
-    

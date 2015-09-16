@@ -23,19 +23,27 @@ class NLSE():
     '''
     Embedding subspace
     '''
-    def __init__(self, emb_path, sub_size=10, model_file=None):
+    def __init__(self, emb_path, sub_size, model_file=None):
 
         # Random Seed
         rng = np.random.RandomState(1234)        
         if model_file:
+            # Check conflicting parameters given 
+            if emb_path is not None or sub_size is not None:
+                raise EnvironmentError, ("When loading a model emb_path and "
+                                         "sub_size must be set to None")
             # Load pre existing model  
             with open(model_file, 'rb') as fid: 
-                [W1, W2, W3] = cPickle.load(fid)
-            W1 = theano.shared(W1, borrow=True)
-            W2 = theano.shared(W2, borrow=True)
-            W3 = theano.shared(W3, borrow=True)
+                [W1, W2, W3, emb_path] = cPickle.load(fid)
+            # Embeddings e.g. word2vec.   
+            with open(emb_path, 'rb') as fid:
+                W1 = cPickle.load(fid).astype(theano.config.floatX)
+            W1            = theano.shared(W1, borrow=True)
+            W2            = theano.shared(W2, borrow=True)
+            W3            = theano.shared(W3, borrow=True)
+            self.emb_path = emb_path
         else:
-            # Embeddings e.g. Wang's, word2vec.   
+            # Embeddings e.g. word2vec.   
             with open(emb_path, 'rb') as fid:
                 W1 = cPickle.load(fid).astype(theano.config.floatX)
             emb_size, voc_size = W1.shape
@@ -45,6 +53,8 @@ class NLSE():
             W2 = init_W((sub_size, emb_size), rng) 
             # Hidden layer
             W3 = init_W((3, sub_size), rng) 
+            # Store the embedding path used
+            self.emb_path = emb_path
 
         # Fixed parameters
         self.W1     = W1
@@ -94,5 +104,5 @@ class NLSE():
     def save(self, model_file):
         with open(model_file, 'wb') as fid: 
             param_list = [self.W1.get_value()] + [W.get_value() 
-                          for W in self.params]
+                          for W in self.params] + [self.emb_path]
             cPickle.dump(param_list, fid, cPickle.HIGHEST_PROTOCOL)
