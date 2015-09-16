@@ -42,7 +42,7 @@ embeddings we used here
 
     https://www.l2f.inesc-id.pt/~wlin/public/embeddings/
 
-to train the emneddings with other data you can use
+to train the embeddings with other data you can use
 
     https://github.com/wlin12/JNN
 
