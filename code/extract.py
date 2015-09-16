@@ -6,7 +6,11 @@ import os
 import tarfile
 import sys
 
-index_name     = 'wrd2idx.pkl'  
+INDEX_NAME = 'wrd2idx.pkl'  
+
+def help():
+    print "\nTo index tokenized text files (The first must be the train-set!)\n\npython code/extract.py -f train.txt test_1.txt [ ... test_2.txt] pkl_folder/\n\nTo extract embeddings for this vocabulary (You need the pkl_folder/index.pkl created with the previous command):\n\npython code/extract.py -e embeddings.txt embeddings.pkl pkl_folder/index.pkl\n"
+    exit()
 
 def split_train_dev(train_x, train_y, perc=0.8):
     '''
@@ -105,16 +109,14 @@ def get_onehot(vocab_size, dataset):
             
         return X
 
-def save_features(file_names, out_folder, one_hot=False):
+def save_features(in_fnames, out_folder, one_hot=False):
 
-    #READ CORPORA
-    datasets = []
-    for fname in file_names:
-        datasets.append(read_corpus(fname)) 
+    # READ ALL CORPORA 
+    datasets = [read_corpus(in_fname) for in_fname in in_fnames]
 
+    # BUILD INDEX FROM ALL CORPORA
     wrd2idx = {}
     idx = 0        
-    #BUILD INDEX FROM ALL CORPORA
     for d in datasets:
         for tweet in d:
             for wrd in tweet[1]:
@@ -122,13 +124,10 @@ def save_features(file_names, out_folder, one_hot=False):
                     wrd2idx[wrd] = idx
                     idx += 1       
 
-    if not os.path.isdir(out_folder):
-        os.mkdir(out_folder)
-
-    #save index
-    index_path = out_folder + '/' + index_name
+    # SAVE INDEX
+    index_path = out_folder + '/' + INDEX_NAME
     with open(index_path,"w") as fid:
-        print "saving vocabulary: %s" % (index_path)
+        print "Saving vocabulary %s" % (index_path)
         cPickle.dump(wrd2idx, fid, cPickle.HIGHEST_PROTOCOL)
     
     #EXTRACT FEATURES
@@ -142,23 +141,23 @@ def save_features(file_names, out_folder, one_hot=False):
         train_x = get_onehot(len(wrd2idx), train_x)
         dev_x   = get_onehot(len(wrd2idx), dev_x)        
     #save training/dev features        
-    out_name = os.path.basename(os.path.splitext(file_names[0])[0])
+    out_name = os.path.basename(os.path.splitext(in_fnames[0])[0])
     out_file = out_folder + '/' + out_name + '.pkl'
     with open(out_file,"w") as fid:
-        print "saving features: %s" % out_file
+        print "Extracting %s -> %s" % (in_fnames[0], out_file)  
         cPickle.dump([train_x, train_y], fid, cPickle.HIGHEST_PROTOCOL)
 
     out_file = out_folder + '/' + 'dev.pkl'
     with open(out_file,"w") as fid:
-        print "saving features: %s" % out_file
+        print "Extracting %s -> %s" % (in_fnames[0], out_file)  
         cPickle.dump([dev_x, dev_y], fid, cPickle.HIGHEST_PROTOCOL)
 
-    for fname, dataset in zip(file_names[1:], datasets[1:]):
+    for in_fname, dataset in zip(in_fnames[1:], datasets[1:]):
         x, y     = extract_feats(dataset, wrd2idx, one_hot)
-        out_name = os.path.basename(os.path.splitext(fname)[0])
+        out_name = os.path.basename(os.path.splitext(in_fname)[0])
         out_file = out_folder + '/' + out_name + '.pkl'
         with open(out_file, "w") as fid:
-            print "saving features: %s" % out_file
+            print "Extracting %s -> %s" % (in_fname, out_file)  
             cPickle.dump([x, y], fid, cPickle.HIGHEST_PROTOCOL)
 
 def save_embedding(emb_path, pretrained_emb, index_path):
@@ -198,41 +197,45 @@ def save_embedding(emb_path, pretrained_emb, index_path):
     with open(pretrained_emb, 'w') as fid:
         cPickle.dump(E, fid, cPickle.HIGHEST_PROTOCOL)
     
-def save_pruned_embeddings(wrd2idx, out_file):
-
-    with open(emb_path) as fid:
-        with open(out_file,"w") as fod:
-            # Get emb size                
-            fod.write(fid.readline())
-            # Get embeddings for all words in vocabulary                
-            for line in fid.readlines():
-                items = line.split()
-                wrd   = items[0]
-                if wrd in wrd2idx:
-                    fod.write(line)                        
-
 if __name__ == "__main__":    
-    #sanity checks    
-    MESSAGE = "python code/extract.py \n [-f train_file test_file_1 ... test_file_n]: extract features and vocabulary from files in folder /data/txt/ \n [-e path_to_embeddings_file]: create a matrix of pretrained embeddings using the vocabulary extracted using the -f option"
-    opt = sys.argv[1].lower()
-    if opt == "-f":        
-        try:
-            fnames     = sys.argv[2:-1]   
+
+    # ARGUMENT HANDLING 
+    if len(sys.argv[1:]) > 3:
+        opt = sys.argv[1]
+        if opt == "-f":        
+
+            # This should be the input text files and the output folder
+            in_fnames  = sys.argv[2:-1]   
             out_folder = sys.argv[-1]
-            if len(fnames) < 1:
-                print "ERROR: No file names given\n"
-                print MESSAGE         
-            else:                
-                save_features(fnames, out_folder)
-        except IndexError:
-            print "ERROR: No file names given\n"
-            print MESSAGE                 
-    elif opt == "-e":
-        try:            
+            # SANITY CHECKS
+            for in_fname in in_fnames:
+                if not os.path.isfile(in_fname):
+                    print "\nMissing input file %s\n" % in_fname
+                    help()
+            if not os.path.isdir(out_folder):        
+               os.mkdir(out_folder)
+               print "Creating output folder %s" % out_folder 
+            print ""   
+            save_features(in_fnames, out_folder)
+            print ""   
+
+        elif opt == "-e":
+
+            # This should be the input full embeddings in text form, output
+            # embeddings reduced to a vocabulary and the vocabulary
             emb_path, pretrained_emb, index_path = sys.argv[2:]            
+            # SANITY CHECKS
+            if not os.path.isfile(emb_path):
+                print "\nMissing embeddings text file %s\n" % emb_path
+                help()
+            if not os.path.isfile(index_path):
+                print ("\nMissing dictionary %s, did you run "
+                       "./code/extract.py -f ?\n" % index_path)
+                help()
+            print ""   
             save_embedding(emb_path, pretrained_emb, index_path)
-        except IndexError:
-            print "ERROR: please provide the path to the word embeddings file\n"
-            print MESSAGE                 
+            print ""   
+
     else:
-        print MESSAGE
+        print "\nNot enough arguments!" 
+        help()
