@@ -37,16 +37,24 @@ If done right, each tweet should occupy one line, and should look like this exam
 
     id1 id2 neutral None @USER i told you shane would get his 5th-star on rivals before signing day . @USER
 
-You will also need to use some pre-trained embeddings. These should be stored in text
-format per line as
+You will also need to use some pre-trained embeddings. You can find the
+embeddings we used here
 
-    word embedding_vector
+    https://www.l2f.inesc-id.pt/~wlin/public/embeddings/
 
-embedding_vector separates each float by a white space. To get the
-structured-skip-gram embeddings used in the paper, you can reach us by email. 
-These can also be obtained using 
+to train the emneddings with other data you can use
 
     https://github.com/wlin12/JNN
+
+In case you want to use your own the first line should contain
+
+    <number of words> <embedding size> 
+
+After that, the embedding for each word is specified as 
+
+    <word> <embedding_vector>
+
+<embedding_vector> separates each float by a white space. 
 
 **Reproducing the Results**
 
