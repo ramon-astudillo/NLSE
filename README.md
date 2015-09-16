@@ -54,7 +54,7 @@ After that, the embedding for each word is specified as
 
     <word> <embedding_vector>
 
-<embedding_vector> separates each float by a white space. 
+<embedding_vector> where each float is separated by a white space. 
 
 **Reproducing the Results**
 
