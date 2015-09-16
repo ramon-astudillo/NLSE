@@ -19,7 +19,7 @@ import FMeasure as Fmes
 from ipdb import set_trace
 
 def help():
-    print "\npython code/train.py train_file dev_file model_path\n"
+    print "\npython code/train.py train.pkl dev.pkl embedding.pkl model.pkl\n"
     exit()
 
 if __name__ == '__main__':
@@ -47,7 +47,7 @@ if __name__ == '__main__':
     with open(dev_data, 'rb') as fid:
         dev_x, dev_y = cPickle.load(fid) 
     
-    # reformat the labels for the NLSE model
+    # Reformat the labels for the NLSE model
     train_y = [np.array(dy).astype('int32')[None] for dy in train_y]
     dev_y = [np.array(dy).astype('int32')[None] for dy in dev_y]
     

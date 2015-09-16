@@ -44,5 +44,5 @@ if __name__ == '__main__':
             fm = Fmes.FmesSemEval(confusionMatrix=conf_mat)
             # set_trace()
 
-            sys.stdout.write("\rAcc: %2.2f | Fm: %2.2f%%\n" % ( acc*100, fm*100))
+            sys.stdout.write("\rAcc: %2.2f%% | Fm: %2.2f%%\n" % ( acc*100, fm*100))
             sys.stdout.flush()   

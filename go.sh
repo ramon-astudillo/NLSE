@@ -14,8 +14,6 @@ python code/extract.py -e DATA/txt/struc_skip_600.txt \
                           DATA/pkl/struc_skip_600.pkl \
                           DATA/pkl/wrd2idx.pkl
 
-exit
-
 echo "Training"
 python code/train.py DATA/pkl/semeval_train.pkl \
                      DATA/pkl/dev.pkl \
