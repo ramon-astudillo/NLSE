@@ -7,6 +7,8 @@ import theano
 import theano.tensor as T
 import cPickle
 
+from ipdb import set_trace
+
 def init_W(size, rng):
     '''
     Random initialization
@@ -34,32 +36,29 @@ class NLSE():
                                          "sub_size must be set to None")
             # Load pre existing model  
             with open(model_file, 'rb') as fid: 
-                [W1, W2, W3, emb_path] = cPickle.load(fid)
-            # Embeddings e.g. word2vec.   
-            with open(emb_path, 'rb') as fid:
-                W1 = cPickle.load(fid).astype(theano.config.floatX)
-            W1            = theano.shared(W1, borrow=True)
-            W2            = theano.shared(W2, borrow=True)
-            W3            = theano.shared(W3, borrow=True)
+                [E, S, C, emb_path] = cPickle.load(fid)
+            E             = theano.shared(E, borrow=True)
+            S             = theano.shared(S, borrow=True)
+            C             = theano.shared(C, borrow=True)
             self.emb_path = emb_path
         else:
             # Embeddings e.g. word2vec.   
             with open(emb_path, 'rb') as fid:
-                W1 = cPickle.load(fid).astype(theano.config.floatX)
-            emb_size, voc_size = W1.shape
+                E = cPickle.load(fid).astype(theano.config.floatX)
+            emb_size, voc_size = E.shape
             # This is fixed!
-            W1 = theano.shared(W1, borrow=True)
+            E = theano.shared(E, borrow=True)
             # Embedding subspace projection
-            W2 = init_W((sub_size, emb_size), rng) 
+            S = init_W((sub_size, emb_size), rng) 
             # Hidden layer
-            W3 = init_W((3, sub_size), rng) 
+            C = init_W((3, sub_size), rng) 
             # Store the embedding path used
             self.emb_path = emb_path
 
         # Fixed parameters
-        self.W1     = W1
+        self.E     = E
         # Parameters to be updated 
-        self.params = [W2, W3]
+        self.params = [S, C]
         # Compile
         self.compile()
 
@@ -74,17 +73,17 @@ class NLSE():
         Forward pass and Gradients
         '''
         # Get nicer names for parameters
-        W1, W2, W3 = [self.W1] + self.params
+        E, S, C = [self.E] + self.params
 
         # FORWARD PASS
         # Embedding layer subspace
         self.z0    = T.ivector()                    # tweet in one hot
 
         # Use an intermediate sigmoid
-        z1         = W1[:, self.z0]                 # embedding
-        z2         = T.nnet.sigmoid(T.dot(W2, z1))  # subspace
+        z1         = E[:, self.z0]                 # embedding
+        z2         = T.nnet.sigmoid(T.dot(S, z1))  # subspace
         # Hidden layer
-        z3         = T.dot(W3, z2)
+        z3         = T.dot(C, z2)
         z4         = T.sum(z3, 1)                   # Bag of words
         self.hat_y = T.nnet.softmax(z4.T).T
         self.fwd   = theano.function([self.z0], self.hat_y)
@@ -103,6 +102,6 @@ class NLSE():
 
     def save(self, model_file):
         with open(model_file, 'wb') as fid: 
-            param_list = [self.W1.get_value()] + [W.get_value() 
+            param_list = [self.E.get_value()] + [W.get_value() 
                           for W in self.params] + [self.emb_path]
             cPickle.dump(param_list, fid, cPickle.HIGHEST_PROTOCOL)
