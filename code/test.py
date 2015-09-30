@@ -3,10 +3,7 @@ import FMeasure as Fmes
 import nlse
 import numpy as np
 import sys
-from ipdb import set_trace
-# Pre-trained embeddings
-pretrained_emb = 'data/pkl/Emb.pkl'
-
+#from ipdb import set_trace
 
 def help():
     print "\npython code/test.py model_path test_file_1 ... test_file_n\n"
@@ -42,7 +39,6 @@ if __name__ == '__main__':
                     sys.stdout.write("\rTesting %d/%d" % (j+1, len(X)))
                     sys.stdout.flush()   
             fm = Fmes.FmesSemEval(confusionMatrix=conf_mat)
-            # set_trace()
 
             sys.stdout.write("\rAcc: %2.2f%% | Fm: %2.2f%%\n" % ( acc*100, fm*100))
             sys.stdout.flush()   

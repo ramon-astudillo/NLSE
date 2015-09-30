@@ -16,7 +16,7 @@ import nlse
 import FMeasure as Fmes
 
 # DEBUGGING
-from ipdb import set_trace
+#from ipdb import set_trace
 
 def help():
     print "\npython code/train.py train.pkl dev.pkl embedding.pkl model.pkl\n"
@@ -72,7 +72,8 @@ if __name__ == '__main__':
     i  = T.lscalar()
     givens={ nn.z0 : x[st[i]:ed[i], 0],
              nn.y  : y[i] }
-    train_batch = theano.function(inputs=[i], outputs=nn.F, updates=updates, givens=givens)
+    train_batch = theano.function(inputs=[i], outputs=nn.F, updates=updates, 
+                                  givens=givens)
 
     # Epoch loop
     last_cr  = None
