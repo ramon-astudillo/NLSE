@@ -10,7 +10,7 @@ INDEX_NAME = 'wrd2idx.pkl'
 
 def help():
     print "\nTo index tokenized text files (The first must be the train-set!)\n\npython code/extract.py -f train.txt test_1.txt [ ... test_2.txt] pkl_folder/\n\nTo extract embeddings for this vocabulary (You need the pkl_folder/index.pkl created with the previous command):\n\npython code/extract.py -e embeddings.txt embeddings.pkl pkl_folder/index.pkl\n"
-    exit()
+    exit(1)
 
 def split_train_dev(train_x, train_y, perc=0.8):
     '''

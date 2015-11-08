@@ -7,8 +7,6 @@ import theano
 import theano.tensor as T
 import cPickle
 
-from ipdb import set_trace
-
 def init_W(size, rng):
     '''
     Random initialization
