@@ -45,11 +45,16 @@ directly. See the Step by Step section for instructions.
 ## Data
 
 To reproduce the paper's results you will need the SemEval data from 2013 to
-2015. You also need to tokenize the data using
+2016. This is not public so you have to ask someone for it (Silvio and I have
+it). The paths for the data should be
 
-    https://github.com/myleott/ark-twokenize-py
+    DATA/txt/Twitter2013_raws.txt
+    DATA/txt/Twitter2014_raws.txt
+    DATA/txt/Twitter2015_raws.txt
+    DATA/txt/Twitter2016_raws.txt
+    DATA/txt/semeval_train2016.txt
 
-If done right, each tweet should occupy one line, and should look like this example
+The data should look this example
 
     id1 id2 neutral None @USER i told you shane would get his 5th-star on rivals before signing day . @USER
 
@@ -58,11 +63,23 @@ embeddings we used here
 
     https://www.l2f.inesc-id.pt/~wlin/public/embeddings/
 
-to train the embeddings with other data you can use
+For example to download the 400 side emebddings (used by default in the go
+script)
+
+    wget https://www.l2f.inesc-id.pt/~wlin/public/embeddings/struc_skip_400.txt -P DATA/txt/ 
+
+This should store the file as
+
+    DATA/txt/struc_skip_400.txt
+
+## Training your own embeddings
+
+To train the embeddings with other data you can use
 
     https://github.com/wlin12/JNN
 
-In case you want to use your own the first line should contain
+In case you want to use other embeddings the format is the following: The first
+line should contain
 
     <number of words> <embedding size>
 
@@ -74,7 +91,7 @@ After that, the embedding for each word is specified as
 
 ## Reproducing the Results
 
-Once you have formatted the data and obtained the embeddings, you just have to run
+Once you have gotten the semeval data and the embeddings, just call
 
     ./go.sh
 
