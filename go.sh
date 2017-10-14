@@ -15,21 +15,21 @@ embeddings=DATA/txt/struc_skip_400.txt
 model=nlse
 
 # Geometry
-sub_size=100     # 10 
+sub_size=10 
 
 # Weight initialization
-init_sub='glorot-sigmoid'    # 0.1
-init_clas='glorot-sigmoid'   # 0.7
+init_sub=0.1
+init_clas=0.7
 
 # Optimization    
-n_epoch=100     # 12
-lrate=0.0001    # 0.005
-randomize=True  # True    
-dropout=0.      # 0.
+n_epoch=12
+lrate=0.005
+randomize=True    
+dropout=0.
 
 # Cost fuction    
-neutral_penalty=0.25 # 0.25 
-update_emb=True      # True
+neutral_penalty=0.25  
+update_emb=True      
 
 work_folder=DATA/pkl/$(basename $train_set .txt)/
 model_path=$work_folder/models/$(basename $embeddings .txt)/sub_size${sub_size}.$dropout/

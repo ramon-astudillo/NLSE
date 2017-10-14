@@ -20,9 +20,11 @@ For the extended experiments, including POS tagging, please cite
 The code for these two papers is available in the `semeval2015` branch.
 Current `master` points to the extended version for SemEval2016, for this cite,
 
-    Amir, Silvio, Ramón Astudillo, Wang Ling, Mário J. Silva, and Isabel
-    Trancoso. "INESC-ID at SemEval-2016 Task 4-A: Reducing the Problem of
-    Out-of-Embedding Words." SemEval 2016.
+    Amir, Silvio, Ramón Astudillo, Wang Ling, Mário J. Silva, and Isabel Trancoso. "INESC-ID at 
+    SemEval-2016 Task 4-A: Reducing the Problem of Out-of-Embedding Words." SemEval 2016.
+
+[[pdf]](http://www.aclweb.org/anthology/S16-1036), 
+[[BibTex]](https://scholar.googleusercontent.com/scholar.bib?q=info:r6o3TBe8pUUJ:scholar.google.com/&output=citation&scisig=AAGBfm0AAAAAWeKI9AY6ZsmTxi9yAf3a6LZvy-A2RhZj&scisf=4&ct=citation&cd=-1&hl=en)
 
 
 ## Instalation
