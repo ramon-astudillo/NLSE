@@ -7,14 +7,14 @@ in
     Sentiment Analysis without hand-coded Features or Liguistic Resources using Embedding
     Subspaces", SemEval 2015
 
-[[pdf]](http://alt.qcri.org/semeval2015/cdrom/pdf/SemEval109.pdf), 
+[[pdf]](http://alt.qcri.org/semeval2015/cdrom/pdf/SemEval109.pdf)
 
 For the extended experiments, including POS tagging, please cite
 
     R. F. Astudillo, S. Amir,  W. Ling, M. Silva and I. Trancoso "Learning Word Representations
     from Scarce and Noisy Data with Embedding Sub-spaces", ACL-IJCNLP 2015
 
-[[pdf]](http://anthology.aclweb.org/P/P15/P15-1104.pdf),
+[[pdf]](http://anthology.aclweb.org/P/P15/P15-1104.pdf)
 
 The code for these two papers is available in the `semeval2015` branch.
 Current `master` points to the extended version for SemEval2016, for this cite,
@@ -22,7 +22,7 @@ Current `master` points to the extended version for SemEval2016, for this cite,
     Amir, Silvio, Ramón Astudillo, Wang Ling, Mário J. Silva, and Isabel Trancoso. "INESC-ID at 
     SemEval-2016 Task 4-A: Reducing the Problem of Out-of-Embedding Words." SemEval 2016.
 
-[[pdf]](http://www.aclweb.org/anthology/S16-1036), 
+[[pdf]](http://www.aclweb.org/anthology/S16-1036) 
 
 
 ## Instalation
