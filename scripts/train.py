@@ -11,76 +11,133 @@ import cPickle
 import argparse
 import ast   # to pass literal values
 import logging
-# Local
 import nlse.FMeasure as Fmes
 
-# DEBUGGING
-from pdb import set_trace
 
 def colstr(string, color):
     if color is None:
         cstring = string
     elif color == 'red':
-        cstring = "\033[31m" + string  + "\033[0m"
+        cstring = "\033[31m" + string + "\033[0m"
     elif color == 'green':
-        cstring = "\033[32m" + string  + "\033[0m"
+        cstring = "\033[32m" + string + "\033[0m"
     return cstring
+
 
 if __name__ == '__main__':
 
     # ARGUMENT HANDLING
     parser = argparse.ArgumentParser(prog='Trains model')
-    parser.add_argument('-o', help='Folder where the train data embeddings are',
-        type=str, required=True)
-    parser.add_argument('-e', help='Original embeddings file', type=str,
-        required=True)
-    parser.add_argument('-m', help='Path where model is saved', type=str,
-        required=True)
+    parser.add_argument(
+        '-o',
+        help='Folder where the train data embeddings are',
+        type=str, required=True
+    )
+    parser.add_argument(
+        '-e',
+        help='Original embeddings file', type=str,
+        required=True
+    )
+    parser.add_argument(
+        '-m',
+        help='Path where model is saved', type=str,
+        required=True
+    )
     # CONFIG
     # Model
     # TODO: Fuse all models and reduce this ton hidden layer type
-    parser.add_argument('-model', help='model used (MLP, GRU, CNN ...)',
-        default="nlse", type=str)
+    parser.add_argument(
+        '-model',
+        help='model used (MLP, GRU, CNN ...)',
+        default="nlse", type=str
+    )
     # Geometry
-    parser.add_argument('-sub_size', help='sub-space size', default=10,
-        type=int)
+    parser.add_argument(
+        '-sub_size',
+        help='sub-space size', default=10,
+        type=int
+    )
     # Weight initialization
-    parser.add_argument('-normalize_embeddings', help='Normalize embeddings',
-        default=False, type=ast.literal_eval)
-    parser.add_argument('-init_E_to_average',
+    parser.add_argument(
+        '-normalize_embeddings',
+        help='Normalize embeddings',
+        default=False,
+        type=ast.literal_eval
+    )
+    parser.add_argument(
+        '-init_E_to_average',
         help='Initialize OOEV to the avearge', default=False,
-        type=ast.literal_eval)
-    parser.add_argument('-s',
+        type=ast.literal_eval
+    )
+    parser.add_argument(
+        '-s',
         help='random seed for data shuffling, default is 1234',
         default=1234,
-        type=int)
-    parser.add_argument('-init_sub',
+        type=int
+    )
+    parser.add_argument(
+        '-init_sub',
         help='Scale factor for sub-space initial uniform sampled weights',
-        default=0.1)
-    parser.add_argument('-init_clas',
+        default=0.1
+    )
+    parser.add_argument(
+        '-init_clas',
         help='Scale factor for classifier uniform sampled weights',
-        default=0.7)
+        default=0.7
+    )
     # Optimization
-    parser.add_argument('-n_epoch', help='number of training epochs',
-        default=12, type=int)
-    parser.add_argument('-lrate', help='learning rate', default=0.005,
-        type=float)
-    parser.add_argument('-randomize', help='randomize each epoch',
-        default=True, type=ast.literal_eval)
+    parser.add_argument(
+        '-n_epoch',
+        help='number of training epochs',
+        default=12,
+        type=int
+    )
+    parser.add_argument(
+        '-lrate',
+        help='learning rate',
+        default=0.005,
+        type=float
+    )
+    parser.add_argument(
+        '-randomize',
+        help='randomize each epoch',
+        default=True,
+        type=ast.literal_eval
+    )
     parser.add_argument('-dropout', help='Dropout rate', default=0,
                         type=float)
     # Cost fuction
-    parser.add_argument('-neutral_penalty',
-        help='Penalty for neutral cost', default=0.25, type=float)
+    parser.add_argument(
+        '-neutral_penalty',
+        help='Penalty for neutral cost',
+        default=0.25,
+        type=float
+    )
     # OOEV: Update embeddings
-    parser.add_argument('-only_ooev',
-        help='Update only OOEV', default=True, type=ast.literal_eval)
-    parser.add_argument('-update_emb',
-        help='Update embeddings', default=True, type=ast.literal_eval)
-    parser.add_argument('-update_emb_until_iter',
-        help='Update embeddings until iteration', default=3, type=int)
-    parser.add_argument('-lrate_emb',
-        help='learning rate for embeddings', default=0.001, type=float)
+    parser.add_argument(
+        '-only_ooev',
+        help='Update only OOEV',
+        default=True,
+        type=ast.literal_eval
+    )
+    parser.add_argument(
+        '-update_emb',
+        help='Update embeddings',
+        default=True,
+        type=ast.literal_eval
+    )
+    parser.add_argument(
+        '-update_emb_until_iter',
+        help='Update embeddings until iteration',
+        default=3,
+        type=int
+    )
+    parser.add_argument(
+        '-lrate_emb',
+        help='learning rate for embeddings',
+        default=0.001,
+        type=float
+    )
     # Parse
     args = parser.parse_args(sys.argv[1:])
     # Manual parse for multi-type args
@@ -96,7 +153,6 @@ if __name__ == '__main__':
     # Model path
     dir_path = os.path.dirname(args.m)
     if not os.path.isdir(dir_path):
-        #logging.info('Create folder model %s' % dir_path)
         os.mkdir(dir_path)
 
     # LOGGER
@@ -129,10 +185,10 @@ if __name__ == '__main__':
 
     # Weighted confusion matrix cost
     if args.neutral_penalty != 1:
-        weigthed_CM = np.zeros((3,3))
-        weigthed_CM[0, :] = np.array([1, 0,                    0]) # positive
-        weigthed_CM[1, :] = np.array([0, 1,                    0]) # negative
-        weigthed_CM[2, :] = np.array([0, 0, args.neutral_penalty]) # neutral
+        weigthed_CM = np.zeros((3, 3))
+        weigthed_CM[0, :] = np.array([1, 0,                    0])  # positive
+        weigthed_CM[1, :] = np.array([0, 1,                    0])  # negative
+        weigthed_CM[2, :] = np.array([0, 0, args.neutral_penalty])  # neutral
         # Normalize
         weigthed_CM = weigthed_CM*3./weigthed_CM.sum()
         weigthed_CM = weigthed_CM.astype(theano.config.floatX)
@@ -212,9 +268,10 @@ if __name__ == '__main__':
             # Create mask
             mask = np.zeros((1, voc_size)).astype(theano.config.floatX)
             mask[0, idx] = 1.
-
-            logging.info("Only %d OOEV updated (if they appear in training)" % \
-                         idx.shape[0])
+            logging.info(
+                "Only %d OOEV updated (if they appear in training)" %
+                idx.shape[0]
+            )
         else:
             # Update all embeddings
             mask = np.ones((1, voc_size)).astype(theano.config.floatX)
@@ -224,10 +281,10 @@ if __name__ == '__main__':
             idx = np.nonzero(E.get_value().sum(0) == 0)[0]
             not_idx = np.nonzero(E.get_value().sum(0) != 0)[0]
             E_val = E.get_value()
-            mu = E_val[:,not_idx].mean(1, keepdims=True)
-            std = E_val[:,not_idx].std(1, keepdims=True)
+            mu = E_val[:, not_idx].mean(1, keepdims=True)
+            std = E_val[:, not_idx].std(1, keepdims=True)
             embs, vocs = E_val[:, idx].shape
-            E_val[:,idx] = std*rng.randn(embs, vocs) + mu
+            E_val[:, idx] = std*rng.randn(embs, vocs) + mu
             E.set_value(E_val)
 
         # Sparse update
@@ -237,7 +294,7 @@ if __name__ == '__main__':
 
     # Batch
     i = T.lscalar()
-    givens = { nn.z0 : train_x[st[i]:ed[i], 0], nn.y  : train_y[i] }
+    givens = {nn.z0: train_x[st[i]:ed[i], 0], nn.y: train_y[i]}
     # Compile
     train_batch = theano.function([i], nn.F, updates=updates, givens=givens)
     train_idx = np.arange(n_sent_train).astype('int32')
@@ -262,7 +319,7 @@ if __name__ == '__main__':
         n = 0
         if args.randomize:
             rng.shuffle(train_idx)
-        for j in  train_idx:
+        for j in train_idx:
             obj += train_batch(j)
             # INFO
             if not (n % 500):
@@ -327,7 +384,7 @@ if __name__ == '__main__':
 
         if last_Acc:
             if last_Acc > cr:
-                acc_str ="Acc " + colstr("%2.2f%%" % (cr*100), 'red')
+                acc_str = "Acc " + colstr("%2.2f%%" % (cr*100), 'red')
             else:
                 acc_str = "Acc " + colstr("%2.2f%%" % (cr*100), 'green')
         else:

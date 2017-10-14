@@ -4,29 +4,40 @@ import numpy as np
 import os
 import sys
 import argparse
-# Debug
-from ipdb import set_trace
+import nlse.nlse as model
+
 
 if __name__ == '__main__':
 
     # ARGUMENT HANDLING
     parser = argparse.ArgumentParser(prog='Tests a single model')
-    parser.add_argument('-o', help='Folder where the train data embeddings are',
-        type=str, required=True)
-    parser.add_argument('-m', help='Path where model is saved', type=str,
-        required=True)
-    parser.add_argument('-f', nargs='+', help='Test files', type=str,
-        required=True)
-    parser.add_argument('-model', help='model used (MLP, GRU, CNN ...)',
-        default="nlse", type=str)
+    parser.add_argument(
+        '-o',
+        help='Folder where the train data embeddings are',
+        type=str,
+        required=True
+    )
+    parser.add_argument(
+        '-m',
+        help='Path where model is saved', type=str,
+        required=True
+    )
+    parser.add_argument(
+        '-f',
+        nargs='+',
+        help='Test files', type=str,
+        required=True
+    )
+    parser.add_argument(
+        '-model',
+        help='model used (MLP, GRU, CNN ...)',
+        default="nlse",
+        type=str
+    )
     args = parser.parse_args(sys.argv[1:])
 
     # LOAD MODEL
     if args.model == 'nlse':
-        import nlse.nlse as model
-        nn = model.NN(None, None, model_file=args.m)
-    elif args.model == 'gru':
-        import nlse.gruse as model
         nn = model.NN(None, None, model_file=args.m)
     else:
         raise NotImplementedError("Model %s not supported" % args.model)
@@ -61,8 +72,10 @@ if __name__ == '__main__':
         print ""
 
     # Display result and store along with model
-    results_path = '%s/%s.results'% (os.path.dirname(args.m),
-                                     os.path.basename(args.m).split('.pkl')[0])
+    results_path = '%s/%s.results' % (
+        os.path.dirname(args.m),
+        os.path.basename(args.m).split('.pkl')[0]
+    )
     with open(results_path, 'w') as fid:
         print "\nTest-Set\tAcc\tF-meas"
         fid.write("%15s\t%10s\t%10s\n" % ("Test-Set", "Accuracy", "F-measure"))

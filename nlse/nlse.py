@@ -6,11 +6,8 @@ import numpy as np
 import dropout
 import theano
 import theano.tensor as T
-from theano.tensor.shared_randomstreams import RandomStreams
 import cPickle
 
-# DEBUGGING
-from ipdb import set_trace
 
 def init_W(size, rng, init=None, shared=True):
     '''
@@ -21,10 +18,10 @@ def init_W(size, rng, init=None, shared=True):
     else:
         n_out, n_in = size[0], size[3]
     # Uniform init scaling
-    if init == 'glorot-tanh':    
-        w0 = np.sqrt(6./(n_in + n_out))   
-    elif init == 'glorot-sigmoid':    
-        w0 = 4*np.sqrt(6./(n_in + n_out))   
+    if init == 'glorot-tanh':
+        w0 = np.sqrt(6./(n_in + n_out))
+    elif init == 'glorot-sigmoid':
+        w0 = 4*np.sqrt(6./(n_in + n_out))
     else:
         w0 = init
     W = np.asarray(rng.uniform(low=-w0, high=w0, size=size))
@@ -33,6 +30,7 @@ def init_W(size, rng, init=None, shared=True):
         return theano.shared(W.astype(theano.config.floatX), borrow=True)
     else:
         return W.astype(theano.config.floatX)
+
 
 def forward(z0, params, init, dropout_prob, train=False):
 
@@ -47,7 +45,7 @@ def forward(z0, params, init, dropout_prob, train=False):
     else:
         z1b = z1
     z1s = T.dot(S, z1b)   # subspace
-    z2 = T.nnet.sigmoid(z1s)  
+    z2 = T.nnet.sigmoid(z1s)
     # Hidden layer
     z3 = T.dot(C, z2)
     z4 = T.sum(z3, 1)                  # Bag of words
@@ -65,6 +63,7 @@ def forward(z0, params, init, dropout_prob, train=False):
 
     return hat_y, z4, z3, z2, z1s, z1
 
+
 class NN():
     '''
     Embedding subspace
@@ -74,33 +73,35 @@ class NN():
 
         # Random Seed
         if init is None:
-            rng = np.random.RandomState(1234)        
+            rng = np.random.RandomState(1234)
         else:
-            rng = np.random.RandomState(init)        
+            rng = np.random.RandomState(init)
 
         if model_file:
-            # Check conflicting parameters given 
+            # Check conflicting parameters given
             if emb_path is not None or sub_size is not None:
-                raise EnvironmentError, ("When loading a model emb_path and "
-                                         "sub_size must be set to None")
-            # Load pre existing model  
-            with open(model_file, 'rb') as fid: 
+                raise EnvironmentError(
+                    "When loading a model emb_path and sub_size must be set to "
+                    "None"
+                )
+            # Load pre existing model
+            with open(model_file, 'rb') as fid:
                 [E, S, C, emb_path] = cPickle.load(fid)
             E = theano.shared(E, borrow=True)
             S = theano.shared(S, borrow=True)
             C = theano.shared(C, borrow=True)
             self.emb_path = emb_path
         else:
-            # Embeddings e.g. word2vec.   
+            # Embeddings e.g. word2vec.
             with open(emb_path, 'rb') as fid:
                 E = cPickle.load(fid).astype(theano.config.floatX)
             emb_size, voc_size = E.shape
             # This is fixed!
             E = theano.shared(E, borrow=True)
             # Embedding subspace projection
-            S = init_W((sub_size, emb_size), rng, init=init_sub) # 0.0991
+            S = init_W((sub_size, emb_size), rng, init=init_sub)
             # Hidden layer
-            C = init_W((3, sub_size), rng, init=init_clas) # 0.679
+            C = init_W((3, sub_size), rng, init=init_clas)
             # Store the embedding path used
             self.emb_path = emb_path
 
@@ -119,23 +120,23 @@ class NN():
 
         # FORWARD PASS
         # tweet in one hot
-        self.z0 = T.ivector('tweet')                    
-        self.hat_y, z4, z3, z2, z1s, z1 = forward(self.z0, self.params, init, 
+        self.z0 = T.ivector('tweet')
+        self.hat_y, z4, z3, z2, z1s, z1 = forward(self.z0, self.params, init,
                                                   0, train=False)
-        # Compile 
+        # Compile
         self.fwd = theano.function([self.z0], self.hat_y)
-        
-        # TRAINING COST 
+
+        # TRAINING COST
         # Train cost minus log probability
-        hat_y_tr, _, _, _, _, z1_tr = forward(self.z0, self.params, init, 
+        hat_y_tr, _, _, _, _, z1_tr = forward(self.z0, self.params, init,
                                               dropout_prob, train=True)
-        self.y = T.ivector('sentiment-label')                             
+        self.y = T.ivector('sentiment-label')
         self.z1 = z1_tr
         if weight_CM:
             WCM = (weight_CM[self.y, :].T)*T.log(hat_y_tr)
-            self.F = -T.mean(WCM.sum(0))        
+            self.F = -T.mean(WCM.sum(0))
         else:
-            self.F = -T.mean(T.log(hat_y_tr)[self.y])        
+            self.F = -T.mean(T.log(hat_y_tr)[self.y])
         self.cost = theano.function([self.z0, self.y], self.F)
 
         # Naming
@@ -145,6 +146,6 @@ class NN():
         self.F.name = 'F'
 
     def save(self, model_file):
-        with open(model_file, 'wb') as fid: 
+        with open(model_file, 'wb') as fid:
             param_list = [W.get_value() for W in self.params] + [self.emb_path]
             cPickle.dump(param_list, fid, cPickle.HIGHEST_PROTOCOL)
