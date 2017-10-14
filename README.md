@@ -17,20 +17,37 @@ For the extended experiments, including POS tagging, please cite
 [[pdf]](http://anthology.aclweb.org/P/P15/P15-1104.pdf),
 [[BibTex]](https://scholar.google.pt/scholar.bib?q=info:0rog_aWHY1QJ:scholar.google.com/&output=citation&scisig=AAGBfm0AAAAAVdclXBe81CgJ3lNDs6Y5Ul2Zjrbi7nxu&scisf=4&hl=en)
 
+The code for these two papers is available in the `semeval2015` branch.
+Current `master` points to the extended version for SemEval2016, for this cite,
+
+    Amir, Silvio, Ramón Astudillo, Wang Ling, Mário J. Silva, and Isabel
+    Trancoso. "INESC-ID at SemEval-2016 Task 4-A: Reducing the Problem of
+    Out-of-Embedding Words." SemEval 2016.
+
+
 ## Instalation
 
-The code is OLD, it uses Python2 and old theano (pytorch is the way now). I
-reccomend a virtual environment
+The code is OLD, it uses Python2 and old theano. I reccomend a virtual
+environment and upgrading to latest install tools
 
     virtualenv venv
+    source venv/bin/activate
     pip install pip --upgrade
+    pip install setuptools --upgrade
+
+Then (or otherwise) just install in two steps
+
     pip install -r requirements.txt
     python setup.py develop
 
-Yo will still need twokenize. Since there is no installer you will have to
+You will still need twokenize. Since there is no installer you will have to
 download it and store it on the root folder of this repo, on unix just do
 
     wget https://raw.githubusercontent.com/myleott/ark-twokenize-py/master/twokenize.py
+
+from the root folder of this repository. This should create the file
+
+    twokenize.py
 
 I assume that you will want to modify the code. Otherwise use
 
@@ -96,59 +113,5 @@ Once you have gotten the semeval data and the embeddings, just call
     ./go.sh
 
 to extract the data and train the model. If you are using the largest embeddings
-and you have no GPU, this might take a while.
-
-## Step by Step Explanation
-
-In case, you want to use this code with other data-sets here is a detailed
-description of what you need to do. These are also the steps followed inside
-go.sh
-
-First you create the index and global vocabulary from the text-based data. For
-this you need to use
-
-    python code/extract.py -f DATA/txt/semeval_train.txt \
-                              DATA/txt/tweets_2013.txt \
-                              DATA/txt/tweets_2014.txt \
-                              DATA/txt/tweets_2015.txt \
-                              DATA/pkl/
-
-This will store Pickle files with same file name as the txt files under
-
-    DATA/pkl/
-
-It will also store a wrd2idx.pkl containing a dictionary that maps each word to
-an integer index. If you have any number of txt files using the same format,
-it should work as well.
-
-Next thing is to select the pre-trained embeddings present in the vocabulary
-you are using to build your embedding matrix. This is done with
-
-    python code/extract.py -e DATA/txt/struct_skip_50.txt \
-                              DATA/pkl/struct_skip_50.pkl \
-                              DATA/pkl/wrd2idx.pkl
-
-Note that this step can be a source of problems. If you have words that are not
-in your embeddings they will be set to an embedding of zero. This can be
-counter-productive in some cases.
-
-To train the model use
-
-    python code/train.py DATA/pkl/semeval_train.pkl \
-                         DATA/pkl/dev.pkl \
-                         DATA/pkl/struct_skip_50.pkl \
-                         DATA/models/sskip_50.pkl
-
-Here
-
-    DATA/models/sskip_50.pkl
-
-Is just a example name to define the model. You should use more detailed names
-to remember the hyper-parameters used.
-
-Finally to get the SemEval results, you just need to do
-
-    python code/test.py DATA/models/sskip_50.pkl \
-                        DATA/pkl/tweets_2013.pkl \
-                        DATA/pkl/tweets_2014.pkl \
-                        DATA/pkl/tweets_2015.pkl
+and you have no GPU, this might take a while. You can find more details about
+the steps taken in the script

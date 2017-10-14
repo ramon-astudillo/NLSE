@@ -9,8 +9,7 @@ test_sets="DATA/txt/Twitter2013_raws.txt
            DATA/txt/Twitter2014_raws.txt 
            DATA/txt/Twitter2015_raws.txt" 
 
-embeddings=DATA/txt/struc_skip_50.txt
-#embeddings=DATA/txt/str_skip_400.txt
+embeddings=DATA/txt/struc_skip_400.txt
 
 # Model 
 model=nlse
@@ -41,12 +40,25 @@ if [ ! -d "$model_path" ];then
     mkdir -p "$model_path"
 fi
 
+# First you create the index and global vocabulary from the text-based data.
+# This will store Pickle files with same file name as the txt files under
+#
+#    DATA/pkl/
+#
+# It will also store a wrd2idx.pkl containing a dictionary that maps each word
+# to an integer index. If you have any number of txt files using the same
+# format, it should work as well.
 printf "\033[34mIndexing all data\033[0m\n"
 python scripts/extract.py -o $work_folder -f $train_set $test_sets 
 
+# Next thing is to select the pre-trained embeddings present in the vocabulary
+# you are using to build your embedding matrix. This is done with
 printf "\033[34mExtracting embeddings for all data\033[0m\n"
 python scripts/extract.py -o $work_folder -e $embeddings
 
+# Note that this step can be a source of problems. If you have words that are
+# not in your embeddings they will be set to an embedding of zero. This can be
+# counter-productive in some cases.
 printf "\033[34mTraining\033[0m\n"
 python scripts/train.py -o $work_folder -e $embeddings \
                      -m $model_path/$model_name \
@@ -61,6 +73,7 @@ python scripts/train.py -o $work_folder -e $embeddings \
                      -init_clas $init_clas \
                      -dropout $dropout 
 
+# Finally to get the SemEval results, you just need to do
 printf "\033[34mTesting\033[0m\n"
 python scripts/test.py -o $work_folder \
                     -m $model_path/$model_name \
