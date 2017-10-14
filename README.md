@@ -7,7 +7,7 @@ in
     Sentiment Analysis without hand-coded Features or Liguistic Resources using Embedding
     Subspaces", SemEval 2015
 
-[[pdf]](http://alt.qcri.org/semeval2015/cdrom/pdf/SemEval109.pdf), [[BibTex]](https://scholar.google.pt/scholar.bib?q=info:ocLxCnCv3BIJ:scholar.google.com/&output=citation&scisig=AAGBfm0AAAAAVdckz2Jdg1II6YtdC0iMIN9l2RyFix9R&scisf=4&hl=en)
+[[pdf]](http://alt.qcri.org/semeval2015/cdrom/pdf/SemEval109.pdf), 
 
 For the extended experiments, including POS tagging, please cite
 
@@ -15,7 +15,6 @@ For the extended experiments, including POS tagging, please cite
     from Scarce and Noisy Data with Embedding Sub-spaces", ACL-IJCNLP 2015
 
 [[pdf]](http://anthology.aclweb.org/P/P15/P15-1104.pdf),
-[[BibTex]](https://scholar.google.pt/scholar.bib?q=info:0rog_aWHY1QJ:scholar.google.com/&output=citation&scisig=AAGBfm0AAAAAVdclXBe81CgJ3lNDs6Y5Ul2Zjrbi7nxu&scisf=4&hl=en)
 
 The code for these two papers is available in the `semeval2015` branch.
 Current `master` points to the extended version for SemEval2016, for this cite,
@@ -24,7 +23,6 @@ Current `master` points to the extended version for SemEval2016, for this cite,
     SemEval-2016 Task 4-A: Reducing the Problem of Out-of-Embedding Words." SemEval 2016.
 
 [[pdf]](http://www.aclweb.org/anthology/S16-1036), 
-[[BibTex]](https://scholar.googleusercontent.com/scholar.bib?q=info:r6o3TBe8pUUJ:scholar.google.com/&output=citation&scisig=AAGBfm0AAAAAWeKI9AY6ZsmTxi9yAf3a6LZvy-A2RhZj&scisf=4&ct=citation&cd=-1&hl=en)
 
 
 ## Instalation
