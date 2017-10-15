@@ -133,4 +133,14 @@ Once you have gotten the SemEval data and the embeddings, just call
 
 to extract the data and train the model. If you are using the largest embeddings
 and you have no GPU, this might take a while. You can find more details about
-the steps taken in the script
+the steps taken in the script.
+
+If everything goes fine you should get following results, which are slightly above those reported on the last paper.
+
+
+| Test-Set   | Accuracy    | F-measure (sum)  |
+| -----------|:-----------:| :-----:|
+| 2013       | 72.82%      | 0.724 |
+| 2014       | 73.87%      | 0.723 |
+| 2015       | 68.19%      | 0.658 |
+| 2016       | 61.36%      | 0.615 |
