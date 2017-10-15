@@ -1,7 +1,7 @@
 NLSE
 ====
-Non-Linear Sub-Space Embedding model used for the SemEval challenge described
-in
+Non-Linear Sub-Space Embedding model used for the SemEval 2015 challenge
+described in
 
     R. F. Astudillo, S. Amir,  W. Ling, B. Martins, M. Silva and I. Trancoso "INESC-ID:
     Sentiment Analysis without hand-coded Features or Liguistic Resources using Embedding
@@ -17,7 +17,8 @@ For the extended experiments, including POS tagging, please cite
 [[pdf]](http://anthology.aclweb.org/P/P15/P15-1104.pdf)
 
 The code for these two papers is available in the `semeval2015` branch.
-Current `master` points to the extended version for SemEval2016, for this cite,
+Current `master` points to the extended version for SemEval 2016, for this
+cite,
 
     Amir, Silvio, Ramón Astudillo, Wang Ling, Mário J. Silva, and Isabel Trancoso. "INESC-ID at 
     SemEval-2016 Task 4-A: Reducing the Problem of Out-of-Embedding Words." SemEval 2016.
@@ -27,8 +28,8 @@ Current `master` points to the extended version for SemEval2016, for this cite,
 
 ## Instalation
 
-The code is OLD, it uses Python2 and old theano. I reccomend a virtual
-environment and upgrading to latest install tools
+The code is OLD, it uses Python2 and theano. I reccomend a virtual environment
+and upgrading to latest install tools
 
     virtualenv venv
     source venv/bin/activate
@@ -57,7 +58,7 @@ for a propper installation.
 
 The go.sh bash script will need cygwin or equivalent in Windows machines, but
 you can run the python commands inside the script on a Windows machine
-directly. See the Step by Step section for instructions.
+directly. See inside the script for step by step details. 
 
 ## Data
 
