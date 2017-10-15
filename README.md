@@ -28,7 +28,7 @@ cite,
 
 ## Instalation
 
-The code is OLD, it uses Python2 and theano. I reccomend a virtual environment
+The code is OLD, it uses Python2 and theano. I recommend a virtual environment
 and upgrading to latest install tools
 
     virtualenv venv
@@ -54,11 +54,29 @@ I assume that you will want to modify the code. Otherwise use
 
     python setup.py install
 
-for a propper installation.
+for a proper installation.
 
 The go.sh bash script will need cygwin or equivalent in Windows machines, but
 you can run the python commands inside the script on a Windows machine
 directly. See inside the script for step by step details. 
+
+### A Note on Theano
+
+As you may know theano is no more longer supported. It was a great start for
+Computational Graph toolkits but there are much better alternatives out there
+nowadays (Pytorch, TensorFlow). If you have problems running it, try disabling
+cuDNN. For this you need to write the following on your `~/.theanorc` 
+
+    [dnn]
+    enabled = False
+
+If you are a newtimer to theano, to get it running on the GPU the faster way is
+to define this on your `~/.bashrc`
+
+    export THEANO_FLAGS='cuda.root=/usr/local/cuda-<version>/,device=gpu,floatX=float32'
+    export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/usr/local/cuda-<version>/lib64"
+
+where `<version>` is the CUDA version.
 
 ## Data
 
@@ -81,7 +99,7 @@ embeddings we used here
 
     https://www.l2f.inesc-id.pt/~wlin/public/embeddings/
 
-For example to download the 400 side emebddings (used by default in the go
+For example to download the 400 side embeddings (used by default in the go
 script)
 
     wget https://www.l2f.inesc-id.pt/~wlin/public/embeddings/struc_skip_400.txt -P DATA/txt/ 
@@ -105,11 +123,11 @@ After that, the embedding for each word is specified as
 
     <word> <embedding_vector>
 
-<embedding_vector> where each float is separated by a white space.
+`<embedding_vector>` where each float is separated by a white space.
 
 ## Reproducing the Results
 
-Once you have gotten the semeval data and the embeddings, just call
+Once you have gotten the SemEval data and the embeddings, just call
 
     ./go.sh
 

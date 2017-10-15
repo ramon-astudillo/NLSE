@@ -77,11 +77,13 @@ if __name__ == '__main__':
         os.path.basename(args.m).split('.pkl')[0]
     )
     with open(results_path, 'w') as fid:
-        print "\nTest-Set\tAcc\tF-meas"
-        fid.write("%15s\t%10s\t%10s\n" % ("Test-Set", "Accuracy", "F-measure"))
+        print "\n%-30s\t%12s\t%13s" % ("Test-Set", "Accuracy", "F-measure")
+        fid.write(
+            "%15s\t%10s\t%10s\n" % ("Test-Set", "Accuracy", "F-measure")
+        )
         for test_set, result in zip(args.f, results):
             basename = os.path.basename(test_set)
             acc, fm = result
-            print "%15s\t%10.2f%%\t%10.3f" % (basename, acc*100, fm)
+            print "%-30s\t%10.2f%%\t%10.3f" % (basename, acc*100, fm)
             fid.write("%s\t%2.2f%%\t%1.3f\n" % (basename, acc*100, fm))
     print "\nResults are stored under %s" % results_path
