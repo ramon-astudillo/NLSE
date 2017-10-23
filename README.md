@@ -28,8 +28,8 @@ cite,
 
 ## Instalation
 
-The code is OLD, it uses Python2 and theano. I recommend a virtual environment
-and upgrading to latest install tools
+The code uses Python2 and theano. I recommend a virtual environment and
+upgrading to latest install tools
 
     virtualenv venv
     source venv/bin/activate
@@ -41,7 +41,7 @@ Then (or otherwise) just install in two steps
     pip install -r requirements.txt
     python setup.py develop
 
-You will still need twokenize. Since there is no installer you will have to
+You will also need twokenize. Since there is no installer you will have to
 download it and store it on the root folder of this repo, on unix just do
 
     wget https://raw.githubusercontent.com/myleott/ark-twokenize-py/master/twokenize.py
@@ -50,33 +50,11 @@ from the root folder of this repository. This should create the file
 
     twokenize.py
 
-I assume that you will want to modify the code. Otherwise use
-
-    python setup.py install
-
 for a proper installation.
 
 The go.sh bash script will need cygwin or equivalent in Windows machines, but
 you can run the python commands inside the script on a Windows machine
 directly. See inside the script for step by step details. 
-
-### A Note on Theano
-
-As you may know theano is no more longer supported. It was a great start for
-Computational Graph toolkits but there are much better alternatives out there
-nowadays (Pytorch, TensorFlow). If you have problems running it, try disabling
-cuDNN. For this you need to write the following on your `~/.theanorc` 
-
-    [dnn]
-    enabled = False
-
-If you are a newtimer to theano, to get it running on the GPU the faster way is
-to define this on your `~/.bashrc`
-
-    export THEANO_FLAGS='cuda.root=/usr/local/cuda-<version>/,device=gpu,floatX=float32'
-    export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/usr/local/cuda-<version>/lib64"
-
-where `<version>` is the CUDA version.
 
 ## Data
 
@@ -108,6 +86,27 @@ This should store the file as
 
     DATA/txt/struc_skip_400.txt
 
+## Reproducing the Results
+
+Once you installed and obtained the data, just call
+
+    ./go.sh
+
+to extract the data and train the model. If you are using the largest embeddings
+and you have no GPU, this might take a while. You can find more details about
+the steps taken in the script.
+
+If everything goes fine you should get following results, which are slightly
+above those reported on the last paper.
+
+
+| Test-Set   | Accuracy    | F-measure (sum)  |
+| -----------|:-----------:| :-----:|
+| 2013       | 72.82%      | 0.724 |
+| 2014       | 73.87%      | 0.723 |
+| 2015       | 68.19%      | 0.658 |
+| 2016       | 61.36%      | 0.615 |
+
 ## Training your own embeddings
 
 To train the embeddings with other data you can use
@@ -125,22 +124,20 @@ After that, the embedding for each word is specified as
 
 `<embedding_vector>` where each float is separated by a white space.
 
-## Reproducing the Results
+## Troubleshooting 
 
-Once you have gotten the SemEval data and the embeddings, just call
+As you may know theano is no more longer supported. It was a great start for
+Computational Graph toolkits but there are much better alternatives out there
+nowadays (Pytorch, TensorFlow). If you have problems running it, try disabling
+cuDNN. For this you need to write the following on your `~/.theanorc` 
 
-    ./go.sh
+    [dnn]
+    enabled = False
 
-to extract the data and train the model. If you are using the largest embeddings
-and you have no GPU, this might take a while. You can find more details about
-the steps taken in the script.
+If you are a newtimer to theano, to get it running on the GPU the faster way is
+to define this on your `~/.bashrc`
 
-If everything goes fine you should get following results, which are slightly above those reported on the last paper.
+    export THEANO_FLAGS='cuda.root=/usr/local/cuda-<version>/,device=gpu,floatX=float32'
+    export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/usr/local/cuda-<version>/lib64"
 
-
-| Test-Set   | Accuracy    | F-measure (sum)  |
-| -----------|:-----------:| :-----:|
-| 2013       | 72.82%      | 0.724 |
-| 2014       | 73.87%      | 0.723 |
-| 2015       | 68.19%      | 0.658 |
-| 2016       | 61.36%      | 0.615 |
+where `<version>` is the CUDA version.
