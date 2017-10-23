@@ -1,12 +1,22 @@
 '''
 SemEval models
 '''
-
 import numpy as np
-import dropout
 import theano
 import theano.tensor as T
+from theano.tensor.shared_randomstreams import RandomStreams
 import cPickle
+
+
+def dropout(x, p, training=True, seed=1234):
+    p = 1. - p
+    srng = RandomStreams(seed)
+    if training:
+        x *= srng.binomial(size=x.shape, p=p, dtype=x.dtype)
+        x /= p
+        return x
+    else:
+        return x
 
 
 def init_W(size, rng, init=None, shared=True):
@@ -41,7 +51,7 @@ def forward(z0, params, init, dropout_prob, train=False):
     z1 = E[:, z0]                 # embedding
     # dropout
     if dropout_prob:
-        z1b = dropout.dropout(z1, dropout_prob, seed=init, training=train)
+        z1b = dropout(z1, dropout_prob, seed=init, training=train)
     else:
         z1b = z1
     z1s = T.dot(S, z1b)   # subspace

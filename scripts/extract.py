@@ -6,10 +6,9 @@ import re
 import os
 import sys
 from collections import Counter
-import argparse
 # Local
 from nlse.nlse import init_W
-from nlse.utils import preprocess
+from nlse.features import tokenize_corpus
 
 # Constants
 INDEX_NAME = 'wrd2idx.pkl'
@@ -159,13 +158,6 @@ def extract_feats(corpus, wrd2idx, one_hot):
         X = get_onehot(len(wrd2idx), X)
 
     return np.array(X), np.array(y)
-
-
-def tokenize_corpus(corpus):
-    tokenized_corpus = []
-    for tweet in corpus:
-        tokenized_corpus.append([tweet[0], preprocess(' '.join(tweet[1]))])
-    return tokenized_corpus
 
 
 def get_onehot(vocab_size, dataset):

@@ -34,3 +34,10 @@ def preprocess(m):
     # replace urls with token 'url'
     m = re.sub(twokenize.url, " url ", m, flags=re.I)
     return twokenize.tokenize(m)
+
+
+def tokenize_corpus(corpus):
+    tokenized_corpus = []
+    for tweet in corpus:
+        tokenized_corpus.append([tweet[0], preprocess(' '.join(tweet[1]))])
+    return tokenized_corpus
