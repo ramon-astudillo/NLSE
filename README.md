@@ -50,8 +50,6 @@ from the root folder of this repository. This should create the file
 
     twokenize.py
 
-for a proper installation.
-
 The go.sh bash script will need cygwin or equivalent in Windows machines, but
 you can run the python commands inside the script on a Windows machine
 directly. See inside the script for step by step details. 
